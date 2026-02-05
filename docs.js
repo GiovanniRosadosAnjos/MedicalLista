@@ -3,7 +3,7 @@
 const DOCS = [
   { id:"identificacao_modelo", titulo:"Identificação do Modelo", descricao:"Identificação clara do modelo/variante e codificação comercial/técnica.", tipo:"form" },
   { id:"fotos_dispositivo", titulo:"Fotos do Dispositivo Médico", descricao:"Fotos nítidas do produto, acessórios e etiquetas, conforme padrão.", tipo:"page", href:"fotos_dispositivo.html" },
-  { id:"memorial_descritivo", titulo:"Memorial descritivo", descricao:"Descrição técnica do produto e características.", tipo:"text" },
+  { id:"memorial_descritivo", titulo:"Memorial descritivo", descricao:"Descrição técnica do produto e características (requisitos obrigatórios).", tipo:"page", href:"memorial.html" },
   { id:"manual_usuario", titulo:"Manual do usuário", descricao:"Manual em português (quando aplicável), instruções e advertências.", tipo:"text" },
   { id:"arte_embalagens", titulo:"Desenho ou arte final das embalagens", descricao:"Arte/lay-out final das embalagens primária e secundária.", tipo:"text" },
   { id:"relatorio_amostragem", titulo:"Relatório de Amostragem", descricao:"Critério de amostragem e identificação das amostras.", tipo:"text" },

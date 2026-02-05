@@ -75,28 +75,6 @@
         return;
       }
 
-
-      if(item.id === "memorial_descritivo"){
-        btnWord.style.display = "none";
-        slot.innerHTML =
-          '<div class="hint">Siga exatamente os requisitos abaixo ao elaborar o <b>Memorial Descritivo</b>.</div>' +
-          '<div class="card" style="margin-top:10px;">' +
-            '<div class="memorial-req">' +
-              '<h3 style="margin:0 0 10px; color:var(--qc-blue);">Conteúdo obrigatório</h3>' +
-              '<ol style="margin:0; padding-left:18px; line-height:1.55;">' +
-                '<li><b>Relação de componentes críticos</b>, incluindo <b>fornecedores</b> e possíveis <b>certificações existentes</b>;</li>' +
-                '<li><b>Lista de normas técnicas</b>, com <b>justificativas</b>, definidas pelo fabricante como <b>aplicáveis</b> ao produto;</li>' +
-                '<li><b>Identificação</b>, com <b>justificativas</b>, se o produto é ou não <b>parte de uma família</b>;</li>' +
-                '<li><b>Identificação</b>, com <b>justificativas</b>, se o produto é ou faz parte de um <b>sistema eletromédico</b>, e a <b>descrição dos produtos</b> que fazem parte do sistema, caso aplicável.</li>' +
-              '</ol>' +
-              '<div class="memorial-note" style="margin-top:12px;">' +
-                '<b>Idioma:</b> o memorial deve estar <b>traduzido para o Português</b> quando em idioma distinto do <b>Inglês</b> ou <b>Espanhol</b>.' +
-              '</div>' +
-            '</div>' +
-          '</div>';
-        return;
-      }
-
       // Texto padrão
       slot.innerHTML = '<div class="hint">O que enviar em: <b>' + escapeHtml(item.titulo) + '</b></div>' +
                        '<div class="card" style="margin-top:10px;"><div style="white-space:pre-wrap; line-height:1.45;">' +

@@ -137,14 +137,3 @@ input[type="text"]::placeholder, textarea::placeholder{color:#8a8a8a;}
 .models-table td, .models-table th{min-width:0;}
 /* Garantir que qualquer coisa não "vaze" horizontalmente */
 *{max-width:100%;}
-
-
-/* Memorial Descritivo */
-.memorial-req ol li{ margin-bottom:6px; }
-.memorial-note{
-  background:#f5f5f5;
-  border:1px solid rgba(11,60,93,.20);
-  border-radius:10px;
-  padding:10px 12px;
-  color:#111;
-}

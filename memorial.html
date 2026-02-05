@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Memorial Descritivo</title>
+  <link rel="stylesheet" href="./style.css"/>
+  <style>
+    .req-list{margin:0; padding-left:18px; line-height:1.6;}
+    .req-list li{margin-bottom:8px;}
+    .req-box{
+      background:#f5f5f5;
+      border:1px solid rgba(11,60,93,.20);
+      border-radius:10px;
+      padding:12px 14px;
+      margin-top:12px;
+    }
+    .req-box strong{color:var(--qc-blue);}
+  </style>
+
+  <style>
+    .qc-modal-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.45);
+      display:none; align-items:center; justify-content:center; padding:18px;
+      z-index:9999;
+    }
+    .qc-modal{
+      width:min(920px, 96vw);
+      background:#fff;
+      border-radius:14px;
+      border:1px solid rgba(11,60,93,.25);
+      box-shadow:0 10px 28px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .qc-modal-header{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px 14px;
+      background:#e6f4fb;
+      color:var(--qc-blue);
+      font-weight:800;
+    }
+    .qc-modal-body{ padding:14px; }
+    .qc-modal-body pre{
+      white-space:pre-wrap; line-height:1.45; margin:0;
+      font-family:inherit;
+    }
+    .qc-modal-actions{ display:flex; justify-content:flex-end; padding:12px 14px; gap:10px; }
+    .btn.small{ padding:8px 12px; border-radius:10px; }
+    .rule-row{ display:flex; justify-content:flex-end; margin-top:10px; }
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Memorial Descritivo</h1>
+      <p class="subtitle">O memorial deverá conter:</p>
+
+      <ol class="req-list">
+        <li><b>Relação de componentes críticos</b>, incluindo <b>fornecedores</b> e possíveis <b>certificações existentes</b>;</li>
+        <li><b>Lista de normas técnicas</b>, com <b>justificativas</b>, definidas pelo fabricante como aplicáveis ao produto;</li>
+        <li><b>Identificação</b>, com <b>justificativas</b>, se o produto é ou não parte de uma <b>família</b>;</li>
+        <li><b>Identificação</b>, com <b>justificativas</b>, se o produto é ou faz parte de um <b>sistema eletromédico</b>, e a descrição dos produtos que fazem parte do sistema, caso aplicável.</li>
+      </ol>
+
+      <div class="req-box">
+        <strong>Idioma</strong><br/>
+        O memorial deverá ser traduzido para o <b>Português</b>, quando em idioma distinto do <b>Inglês</b> ou <b>Espanhol</b>.
+      </div>
+
+      <!-- Quadro final (mesma ideia do print 2: tabela/caixa informativa) -->
+      
+
+      <div class="rule-row">
+        <button class="btn small" type="button" id="btn-regra">Ver regra (RAC) aqui</button>
+      </div>
+
+      <div class="qc-modal-backdrop" id="modal-backdrop" aria-hidden="true">
+        <div class="qc-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="qc-modal-header">
+            <div id="modal-title">Exigência do RAC (6.2.1.2.1 e)</div>
+            <button class="btn small" type="button" id="btn-fechar">Fechar</button>
+          </div>
+          <div class="qc-modal-body">
+            <pre>Conforme exigência estabelecida em 6.2.1.2.1 e) do RAC
+"e) Memorial descritivo contemplando o projeto do objeto em seus detalhes construtivos e funcionais, e a relação de seus componentes críticos, incluindo seus fornecedores e possíveis certificações existentes, traduzidos para o Português, quando em idioma distinto do Inglês ou Espanhol;
+
+Fazem parte do “Memorial Descritivo” a lista de normas técnicas, com justificativas, definidas pelo fabricante como aplicáveis ao produto; a identificação, com justificativas, se o produto é ou não parte de uma família; a identificação, com justificativas, se o produto é ou faz parte de um sistema eletromédico; e a descrição dos produtos que fazem parte do sistema, caso aplicável.
+
+Nota 3: Cabe ao fabricante informar a relação dos componentes considerados críticos mencionados em e), e ao OCP a avaliação de tal relação, podendo ocorrer a inclusão de outros componentes."</pre>
+<div class="card" style="margin-top:14px;">
+        <table class="table" style="border-radius:10px; overflow:hidden;">
+          <tr>
+            <td style="width:45%;">Portaria Inmetro n.º 384 de 18.12.2020 - RAC (Alterado por 254.2021)</td>
+            <td>Requisitos de Avaliação da Conformidade para Equipamentos sob Regime de Vigilância Sanitária</td>
+          </tr>
+          <tr>
+            <td>Portaria Inmetro n.º 200 de 29.04.2021 - RGCP</td>
+            <td>Requisitos Gerais de Certificação de Produtos</td>
+          </tr>
+        </table>
+      </div>
+          </div>
+          <div class="qc-modal-actions">
+            <button class="btn small" type="button" id="btn-fechar2">Fechar</button>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function(){
+          const btn = document.getElementById("btn-regra");
+          const bd = document.getElementById("modal-backdrop");
+          const close1 = document.getElementById("btn-fechar");
+          const close2 = document.getElementById("btn-fechar2");
+
+          function openM(){ bd.style.display="flex"; bd.setAttribute("aria-hidden","false"); }
+          function closeM(){ bd.style.display="none"; bd.setAttribute("aria-hidden","true"); }
+
+          btn.addEventListener("click", openM);
+          close1.addEventListener("click", closeM);
+          close2.addEventListener("click", closeM);
+
+          bd.addEventListener("click", function(e){ if(e.target === bd) closeM(); });
+          document.addEventListener("keydown", function(e){ if(e.key === "Escape" && bd.style.display==="flex") closeM(); });
+        })();
+      </script>
+<div class="actions">
+        <a class="btn" href="./index.html">Voltar para a lista</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
