@@ -1,0 +1,47 @@
+
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Lista de Documentos – Eletromédico</title>
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Lista de Documentos – Eletromédico</h1>
+      <p class="subtitle">Documentos que o cliente deverá enviar para certificação.</p>
+      <div class="hint">Clique no nome do documento para ver o que é esperado naquele item.</div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <table class="table" aria-label="Lista de documentos">
+        <thead>
+          <tr>
+            <th style="width:32%;">Documento</th>
+            <th style="width:53%;">Descrição</th>
+            <th style="width:15%;">Coluna 3</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-docs"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="./docs.js"></script>
+  <script>
+    const tbody = document.getElementById("tbody-docs");
+    tbody.innerHTML = window.DOCS.map(d=>{
+      const href = (d.tipo==="page" && d.href) ? d.href : ("detalhe.html?doc=" + encodeURIComponent(d.id));
+      return `
+        <tr>
+          <td><a href="${href}">${escapeHtml(d.titulo)}</a></td>
+          <td>${escapeHtml(d.descricao)}</td>
+          <td></td>
+        </tr>
+      `;
+    }).join("");
+  </script>
+</body>
+</html>

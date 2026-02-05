@@ -1,0 +1,150 @@
+
+/* QC CERT - Base */
+:root{
+  --qc-blue:#0b3c5d;
+  --qc-bg:#a9d6f3;
+  --qc-card:#ffffff;
+  --qc-border:rgba(11,60,93,.25);
+}
+
+html,body,button,input,textarea,select,table,th,td,a,p,div,span,label{
+  font-family:"Century Gothic", CenturyGothic, "AppleGothic", Arial, sans-serif !important;
+}
+
+body{ margin:0; background:var(--qc-bg); color:#111; }
+
+.container{ max-width:1200px; margin:0 auto; padding:18px; }
+
+.card{
+  background:var(--qc-card);
+  border:1px solid var(--qc-border);
+  border-radius:12px;
+  padding:14px;
+}
+
+h1{ margin:0 0 6px; color:var(--qc-blue); font-size:26px; }
+h2{ margin:0 0 10px; color:var(--qc-blue); font-size:20px; }
+.subtitle{ margin:0; color:var(--qc-blue); font-weight:600; }
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.table th,.table td{ border:1px solid #111; padding:10px; vertical-align:top; }
+.table thead th{ background:#e6f4fb; color:var(--qc-blue); text-align:center; font-weight:700; }
+
+a{ color:var(--qc-blue); font-weight:700; text-decoration:underline; }
+a:hover{ filter:brightness(.95); }
+
+.actions{ display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top:12px; }
+.btn{
+  appearance:none;
+  border:1px solid rgba(11,60,93,.35);
+  background:#fff;
+  color:var(--qc-blue);
+  font-weight:700;
+  border-radius:10px;
+  padding:10px 14px;
+  cursor:pointer;
+}
+.btn.primary{ background:#e6f4fb; border-color:var(--qc-blue); }
+.btn:hover{ filter:brightness(.98); }
+
+/* Forms */
+.field{ margin-top:12px; }
+label{ display:block; font-weight:700; color:var(--qc-blue); margin-bottom:6px; }
+input[type="text"], textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid rgba(11,60,93,.35);
+  outline:none;
+  background:#fff;
+}
+textarea{ min-height:72px; resize:vertical; }
+
+.radio-row{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+.hint{ margin-top:10px; font-weight:600; color:var(--qc-blue); font-size:13px; }
+
+/* Photo tables */
+.photo-title{ margin-top:18px; font-weight:800; color:var(--qc-blue); }
+.photo-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  margin-top:12px;
+}
+.photo-table td{
+  border:1px solid #111;
+  text-align:center;
+  vertical-align:middle;
+  padding:10px;
+}
+.photo-table.photo-3 td{ width:33.33%; }
+.photo-table.photo-2 td{ width:50%; }
+
+.photo-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; height:220px; }
+.photo-table img{ max-width:92%; max-height:160px; object-fit:contain; display:block; }
+.photo-cap{ font-weight:700; color:var(--qc-blue); }
+
+.bad img{ border:3px solid #d00000; }
+
+
+/* --- Ajustes de layout (Identificação do Modelo) --- */
+.models-table{table-layout:fixed;}
+.models-table th{background:#f2f2f2;} /* cinza bem claro onde não escreve */
+.models-table td{background:#fff;}
+.models-table td.static-cell{background:#f5f5f5;} /* caso use células estáticas */
+.models-table .cell-pad{padding:10px;}
+.models-table .owner-question{font-weight:700;color:var(--qc-blue);display:block;margin-bottom:6px;}
+.models-table .owner-radios{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.models-table .owner-radios label{font-weight:600;color:#111;margin:0;}
+.models-table input[type="text"]{box-sizing:border-box;}
+
+/* Inputs e áreas de texto */
+input[type="text"], textarea{background:#fff;}
+input[type="text"]::placeholder, textarea::placeholder{color:#8a8a8a;}
+
+/* Blocos sem digitação: fundo cinza claro */
+.readonly-box{background:#f5f5f5;border:1px solid rgba(11,60,93,.20);border-radius:10px;padding:10px;}
+
+/* --- Correção de overflow (limites extrapolados) --- */
+.models-table{width:100%; table-layout:fixed;}
+.models-table th, .models-table td{overflow:hidden;}
+.models-table td{padding:10px;}
+.models-table input[type="text"], .models-table textarea{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+.owner-radios{max-width:100%; overflow:hidden;}
+
+/* --- Overflow definitivo (grid + card) --- */
+.card{overflow:hidden;}
+.models-header{min-width:0;}
+.models-header .plus-btn{flex:0 0 auto;}
+/* Em grid, itens precisam permitir encolher */
+.two-col > div{min-width:0;}
+/* Em tabelas, permitir encolhimento do conteúdo */
+.models-table td, .models-table th{min-width:0;}
+/* Garantir que qualquer coisa não "vaze" horizontalmente */
+*{max-width:100%;}
+
+
+/* Memorial Descritivo */
+.memorial-req ol li{ margin-bottom:6px; }
+.memorial-note{
+  background:#f5f5f5;
+  border:1px solid rgba(11,60,93,.20);
+  border-radius:10px;
+  padding:10px 12px;
+  color:#111;
+}

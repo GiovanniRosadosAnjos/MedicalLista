@@ -1,0 +1,332 @@
+
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Detalhe do Documento</title>
+  <link rel="stylesheet" href="./style.css"/>
+  <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+  <script src="https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <style>
+    .models-header{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .plus-btn{width:34px;height:34px;border-radius:999px;border:2px solid #c30000;color:#c30000;background:#fff;font-size:20px;font-weight:900;cursor:pointer;}
+    .models-table{width:100%; border-collapse:collapse; margin-top:10px; background:#fff; border-radius:12px; overflow:hidden;}
+    .models-table th,.models-table td{border:1px solid #111; padding:8px; vertical-align:top;}
+    .models-table th{background:#f7f7f7; color:var(--qc-blue); font-weight:800;}
+    .models-table input[type="text"]{width:100%; padding:6px 8px; border-radius:10px; border:1px solid rgba(11,60,93,.25);}
+    .owner-extra{display:none; margin-top:8px;}
+    .owner-extra.visible{display:block;}
+    .two-col{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media(max-width:800px){ .two-col{grid-template-columns:1fr;} }
+    .mini-help{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:999px;border:1px solid rgba(11,60,93,.35);color:var(--qc-blue);font-weight:900;margin-left:8px;cursor:help;background:#fff;font-size:12px;user-select:none;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1 id="doc-title">Documento</h1>
+      <p class="subtitle" id="doc-desc">Descrição</p>
+
+      <div id="slot"></div>
+
+      <div class="actions">
+        <a class="btn" href="./index.html">Voltar para a lista</a>
+        <button class="btn" id="btn-clear" type="button">Limpar tudo</button>
+        <button class="btn primary" id="btn-word" type="button" style="display:none;">Baixar WORD</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./docs.js"></script>
+  <script>
+    function qs(sel){ return document.querySelector(sel); }
+
+    document.addEventListener("DOMContentLoaded", function(){
+      const params = new URLSearchParams(location.search);
+      const docId = params.get("doc") || "";
+      const item = window.DOCS_BY_ID[docId];
+
+      const titleEl = document.getElementById("doc-title");
+      const descEl  = document.getElementById("doc-desc");
+      const slot    = document.getElementById("slot");
+      const btnWord = document.getElementById("btn-word");
+
+      document.getElementById("btn-clear").addEventListener("click", function(){
+        if(!confirm("Deseja limpar todos os dados preenchidos?")) return;
+        localStorage.removeItem(window.AutoSave.key(docId));
+        location.reload();
+      });
+
+      if(!item){
+        titleEl.textContent = "Documento não encontrado";
+        descEl.textContent = "Verifique o link (doc=...).";
+        slot.innerHTML = '<div class="hint">ID não encontrado na lista.</div>';
+        return;
+      }
+
+      titleEl.textContent = item.titulo;
+      descEl.textContent  = item.descricao;
+
+      if(item.id === "identificacao_modelo"){
+        btnWord.style.display = "inline-flex";
+        slot.innerHTML = formHtml();
+        initForm(docId, btnWord, slot);
+        return;
+      }
+
+
+      if(item.id === "memorial_descritivo"){
+        btnWord.style.display = "none";
+        slot.innerHTML =
+          '<div class="hint">Siga exatamente os requisitos abaixo ao elaborar o <b>Memorial Descritivo</b>.</div>' +
+          '<div class="card" style="margin-top:10px;">' +
+            '<div class="memorial-req">' +
+              '<h3 style="margin:0 0 10px; color:var(--qc-blue);">Conteúdo obrigatório</h3>' +
+              '<ol style="margin:0; padding-left:18px; line-height:1.55;">' +
+                '<li><b>Relação de componentes críticos</b>, incluindo <b>fornecedores</b> e possíveis <b>certificações existentes</b>;</li>' +
+                '<li><b>Lista de normas técnicas</b>, com <b>justificativas</b>, definidas pelo fabricante como <b>aplicáveis</b> ao produto;</li>' +
+                '<li><b>Identificação</b>, com <b>justificativas</b>, se o produto é ou não <b>parte de uma família</b>;</li>' +
+                '<li><b>Identificação</b>, com <b>justificativas</b>, se o produto é ou faz parte de um <b>sistema eletromédico</b>, e a <b>descrição dos produtos</b> que fazem parte do sistema, caso aplicável.</li>' +
+              '</ol>' +
+              '<div class="memorial-note" style="margin-top:12px;">' +
+                '<b>Idioma:</b> o memorial deve estar <b>traduzido para o Português</b> quando em idioma distinto do <b>Inglês</b> ou <b>Espanhol</b>.' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        return;
+      }
+
+      // Texto padrão
+      slot.innerHTML = '<div class="hint">O que enviar em: <b>' + escapeHtml(item.titulo) + '</b></div>' +
+                       '<div class="card" style="margin-top:10px;"><div style="white-space:pre-wrap; line-height:1.45;">' +
+                       escapeHtml(textoPadrao(item.titulo)) + '</div></div>';
+    });
+
+    function textoPadrao(titulo){
+      return [
+        "• Escopo do que é esperado (descreva aqui).",
+        "• Formato aceito (PDF/DOCX/Imagens), idioma e versão.",
+        "• Quando aplicável, incluir rastreabilidade (código, revisão, data).",
+        "",
+        "Observação: este texto é um modelo inicial — personalize conforme seu procedimento."
+      ].join("\n");
+    }
+
+    function formHtml(){
+      return '' +
+        '<div class="field">' +
+          '<label>Descrição do produto médico</label>' +
+          '<input id="produto" type="text" placeholder="Digite o produto (ex.: Desfibrilador Cardíaco)"/>' +
+        '</div>' +
+
+        '<div class="field">' +
+          '<div class="models-header">' +
+            '<label style="margin:0;">Modelos</label>' +
+            '<button class="plus-btn" id="btn-add" type="button" aria-label="Adicionar modelo">+</button>' +
+          '</div>' +
+          '<table class="models-table">' +
+            '<thead><tr>' +
+              '<th style="width:32%;">Nome</th>' +
+              '<th style="width:22%;">Marca comercial</th>' +
+              '<th>Propriedade da marca</th>' +
+            '</tr></thead>' +
+            '<tbody id="models"></tbody>' +
+          '</table>' +
+          '<div class="hint">Use o botão + para adicionar mais modelos.</div>' +
+        '</div>' +
+
+        '<div class="field">' +
+          '<label>Existe processos terceirizados?</label>' +
+          '<div class="radio-row">' +
+            '<label><input type="radio" name="terc" value="sim"> sim</label>' +
+            '<label><input type="radio" name="terc" value="nao"> Não</label>' +
+          '</div>' +
+          '<div class="owner-extra" id="terc-extra">' +
+            '<div class="hint">Em caso de SIM, descreva quais processos:</div>' +
+            '<textarea id="processos" placeholder="Ex.: esterilização, calibração, montagem, etc."></textarea>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="field two-col">' +
+          '<div>' +
+            '<label>Identificação da unidade Fabril <span class="mini-help" title="Nome e endereço completo do prédio que fabrica o produto">?</span></label>' +
+            '<textarea id="unidade" placeholder="Nome da unidade + endereço completo"></textarea>' +
+          '</div>' +
+          '<div>' +
+            '<label>Fabricante legal <span class="mini-help" title="Fabricante legal: responsável legal pelo produto. Se for diferente da unidade fabril, explique.">?</span></label>' +
+            '<textarea id="fabricante" placeholder="Razão social + endereço (se aplicável)"></textarea>' +
+          '</div>' +
+        '</div>';
+    }
+
+    function addModelRow(){
+      const tbody = document.getElementById("models");
+      const idx = tbody.children.length + 1;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td><input type="text" data-f="nome" placeholder="Ex.: XPTO"></td>' +
+        '<td><input type="text" data-f="marca" placeholder="Ex.: Samsung"></td>' +
+        '<td>' +
+          '<div class="radio-row">' +
+            '<span style="font-weight:700;color:var(--qc-blue);">Você é proprietário desta marca?</span>' +
+            '<label><input type="radio" name="own_' + idx + '" value="sim"> sim</label>' +
+            '<label><input type="radio" name="own_' + idx + '" value="nao"> Não</label>' +
+          '</div>' +
+          '<div class="owner-extra" data-extra>' +
+            '<div class="hint">Em caso de não, informe o nome do proprietário da marca:</div>' +
+            '<input type="text" data-f="prop" placeholder="Nome do proprietário da marca">' +
+          '</div>' +
+        '</td>';
+
+      tbody.appendChild(tr);
+
+      const extra = tr.querySelector("[data-extra]");
+      tr.querySelectorAll('input[name="own_' + idx + '"]').forEach(function(r){
+        r.addEventListener("change", function(){
+          const checked = tr.querySelector('input[name="own_' + idx + '"]:checked');
+          extra.classList.toggle("visible", checked && checked.value === "nao");
+        });
+      });
+    }
+
+    function initForm(docId, btnWord, rootEl){
+      addModelRow();
+      document.getElementById("btn-add").addEventListener("click", addModelRow);
+
+      const tercExtra = document.getElementById("terc-extra");
+      document.querySelectorAll('input[name="terc"]').forEach(function(r){
+        r.addEventListener("change", function(){
+          const checked = document.querySelector('input[name="terc"]:checked');
+          tercExtra.classList.toggle("visible", checked && checked.value === "sim");
+        });
+      });
+
+      const autosave = window.AutoSave.bind({
+        storageKey: window.AutoSave.key(docId),
+        rootEl: rootEl,
+        getState: collect,
+        setState: hydrate
+      });
+      autosave.restore();
+
+      btnWord.addEventListener("click", async function(){
+        const data = collect();
+
+        // validações obrigatórias
+        if(!data.produto || !data.unidade || !data.fabricante){
+          alert("Preencha todos os campos obrigatórios.");
+          return;
+        }
+        if(!data.terc){ alert("Selecione SIM ou NÃO em processos terceirizados."); return; }
+        if(data.terc === "sim" && !data.processos){ alert("Informe quais processos terceirizados."); return; }
+        if(!data.models.length){ alert("Inclua ao menos 1 modelo."); return; }
+
+        const bad = data.models.find(m => !m.nome || !m.marca || !m.owner || (m.owner==="nao" && !m.prop));
+        if(bad){ alert("Complete todos os campos da tabela de modelos (incluindo proprietário quando for NÃO)."); return; }
+
+        await gerarWord(data);
+      });
+    }
+
+    function collect(){
+      const produto = (document.getElementById("produto").value || "").trim();
+      const unidade = (document.getElementById("unidade").value || "").trim();
+      const fabricante = (document.getElementById("fabricante").value || "").trim();
+
+      const tercEl = document.querySelector('input[name="terc"]:checked');
+      const terc = tercEl ? tercEl.value : "";
+      const processos = (document.getElementById("processos").value || "").trim();
+
+      const models = [];
+      const tbody = document.getElementById("models");
+      Array.from(tbody.children).forEach(function(tr, i){
+        const nome = (tr.querySelector('input[data-f="nome"]').value || "").trim();
+        const marca = (tr.querySelector('input[data-f="marca"]').value || "").trim();
+        const ownEl = tr.querySelector('input[name="own_' + (i+1) + '"]:checked');
+        const owner = ownEl ? ownEl.value : "";
+        const prop = owner === "nao" ? (tr.querySelector('input[data-f="prop"]').value || "").trim() : "";
+
+        if(nome || marca || owner || prop){
+          models.push({nome, marca, owner, prop});
+        }
+      });
+
+      return { produto, unidade, fabricante, terc, processos, models };
+    }
+
+    function hydrate(state){
+      if(!state) return;
+      document.getElementById("produto").value = state.produto || "";
+      document.getElementById("unidade").value = state.unidade || "";
+      document.getElementById("fabricante").value = state.fabricante || "";
+      document.getElementById("processos").value = state.processos || "";
+
+      // rádio terc
+      if(state.terc){
+        const r = document.querySelector('input[name="terc"][value="' + state.terc + '"]');
+        if(r) r.checked = true;
+      }
+      document.getElementById("terc-extra").classList.toggle("visible", state.terc === "sim");
+
+      // models
+      const tbody = document.getElementById("models");
+      tbody.innerHTML = "";
+      const models = Array.isArray(state.models) ? state.models : [];
+      if(models.length === 0){
+        addModelRow();
+      }else{
+        models.forEach(function(m, idx){
+          addModelRow();
+          const tr = tbody.children[idx];
+          tr.querySelector('input[data-f="nome"]').value = m.nome || "";
+          tr.querySelector('input[data-f="marca"]').value = m.marca || "";
+
+          if(m.owner){
+            const r = tr.querySelector('input[name="own_' + (idx+1) + '"][value="' + m.owner + '"]');
+            if(r) r.checked = true;
+          }
+          const extra = tr.querySelector("[data-extra]");
+          extra.classList.toggle("visible", m.owner === "nao");
+          tr.querySelector('input[data-f="prop"]').value = m.prop || "";
+        });
+      }
+    }
+
+    async function gerarWord(data){
+      const d = window.docx;
+      const Document = d.Document, Packer = d.Packer, Paragraph = d.Paragraph, TextRun = d.TextRun, Table = d.Table, TableRow = d.TableRow, TableCell = d.TableCell, WidthType = d.WidthType;
+
+      const title = new Paragraph({ children:[ new TextRun({ text:"Identificação do Modelo", bold:true, size:32 }) ], spacing:{ after:240 }});
+      const pProduto = new Paragraph({ children:[ new TextRun({ text:"Descrição do produto médico: ", bold:true }), new TextRun({ text:data.produto }) ], spacing:{ after:180 }});
+
+      const header = new TableRow({ children:[
+        new TableCell({ children:[ new Paragraph({ children:[ new TextRun({text:"Nome", bold:true}) ] }) ]}),
+        new TableCell({ children:[ new Paragraph({ children:[ new TextRun({text:"Marca comercial", bold:true}) ] }) ]}),
+        new TableCell({ children:[ new Paragraph({ children:[ new TextRun({text:"Propriedade da marca", bold:true}) ] }) ]}),
+      ]});
+
+      const rows = data.models.map(m=>{
+        const propTxt = (m.owner==="sim") ? "Sim" : ("Não — Proprietário: " + (m.prop||""));
+        return new TableRow({ children:[
+          new TableCell({ children:[ new Paragraph(m.nome) ]}),
+          new TableCell({ children:[ new Paragraph(m.marca) ]}),
+          new TableCell({ children:[ new Paragraph(propTxt) ]}),
+        ]});
+      });
+
+      const table = new Table({ width:{ size:100, type:WidthType.PERCENTAGE }, rows:[header, ...rows] });
+
+      const pTerc = new Paragraph({ children:[ new TextRun({ text:"Existe processos terceirizados? ", bold:true }), new TextRun({ text:(data.terc==="sim"?"Sim":"Não") }) ], spacing:{ before:240, after:120 }});
+      const pProc = new Paragraph({ children:[ new TextRun({ text:"Quais processos: ", bold:true }), new TextRun({ text:(data.terc==="sim"?(data.processos||""):"N/A") }) ], spacing:{ after:180 }});
+      const pUF = new Paragraph({ children:[ new TextRun({ text:"Identificação da unidade Fabril: ", bold:true }), new TextRun({ text:data.unidade }) ], spacing:{ after:180 }});
+      const pFL = new Paragraph({ children:[ new TextRun({ text:"Fabricante legal: ", bold:true }), new TextRun({ text:data.fabricante }) ], spacing:{ after:180 }});
+
+      const doc = new Document({ sections:[{ children:[ title, pProduto, new Paragraph({ children:[ new TextRun({text:"Modelos", bold:true}) ], spacing:{ after:120 }}), table, pTerc, pProc, pUF, pFL ] }]});
+      const blob = await Packer.toBlob(doc);
+      saveAs(blob, "Identificacao_do_Modelo.docx");
+    }
+  </script>
+</body>
+</html>
